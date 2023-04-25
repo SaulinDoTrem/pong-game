@@ -1,37 +1,20 @@
 import java.awt.*;
 
-public class Player {
+public class Player extends Sprite{
     private int x;
     private int y;
-    private int width;
-    private int height;
     private boolean isGoingRight;
     private boolean isGoingLeft;
     private int speed;
 
-    public Player(int x, int y, int width, int height, int speed) {
-        this.setHeight(height);
-        this.setWidth(width);
+    public Player(int x, int y, int width, int height, int speed, Color color) {
+        super(width, height, color);
         this.setX(x);
         this.setY(y);
         this.setSpeed(speed);
     }
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
 
-    public int getHeight() {
-        return this.height;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getWidth() {
-        return this.width;
-    }
 
     public void setX(int x) {
             this.x = x;
@@ -73,6 +56,7 @@ public class Player {
         return this.isGoingRight;
     }
 
+    @Override
     public void tick() {
         if(this.isGoingRight())
             this.setX(this.getX()+this.getSpeed());
@@ -80,16 +64,17 @@ public class Player {
         if(this.isGoingLeft())
             this.setX(this.getX()-this.getSpeed());
 
-        if(this.getX()+this.getWidth() > Game.WIDTH*Game.SCALE)
-            this.setX(Game.WIDTH*Game.SCALE - this.getWidth());
+        if(this.getX()+super.getWidth() > Game.WIDTH*Game.SCALE)
+            this.setX(Game.WIDTH*Game.SCALE - super.getWidth());
 
         if(this.getX() < 0)
             this.setX(0);
     }
 
+    @Override
     public void render(Graphics graphics) {
-        graphics.setColor(Color.blue);
-        graphics.fillRect(this.getX(),this.getY(),this.getWidth(),this.getHeight());
+        graphics.setColor(super.getColor());
+        graphics.fillRect(this.getX(), this.getY(), super.getWidth(), super.getHeight());
     }
 
 }

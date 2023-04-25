@@ -13,9 +13,15 @@ public class Game extends Canvas implements Runnable, KeyListener {
     private static int PLAYER_WIDTH = 120;
     private static int PLAYER_HEIGHT = 10;
     private static int PLAYER_SPEED = 5;
+    private static int PLAYER_X = ((WIDTH*SCALE)/2)-PLAYER_WIDTH/2;
+    private static int PLAYER_Y = HEIGHT*SCALE-PLAYER_HEIGHT;
+    private static Color ENEMY_COLOR = Color.red;
+    private static Color PLAYER_COLOR = Color.blue;
     public static boolean isRunning;
     private Thread thread;
-    private Player player = new Player(((WIDTH*SCALE)/2)-PLAYER_WIDTH/2, HEIGHT*SCALE-PLAYER_HEIGHT, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_SPEED);
+    private Player player = new Player(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_SPEED, PLAYER_COLOR);
+    private Enemy enemy = new Enemy(PLAYER_WIDTH, PLAYER_HEIGHT, ENEMY_COLOR, PLAYER_X, 0);
+    private Sprite[] sprites = {this.player, this.enemy};
     private BufferedImage layer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
     public Game() {
@@ -57,7 +63,9 @@ public class Game extends Canvas implements Runnable, KeyListener {
     }
 
     public void tick() {
-        this.player.tick();
+        for (Sprite sprite: this.sprites) {
+            sprite.tick();
+        }
     }
 
     public void render() {
@@ -77,7 +85,10 @@ public class Game extends Canvas implements Runnable, KeyListener {
         graphics.drawImage(this.layer, 0, 0, this.WIDTH*this.SCALE, this.HEIGHT*this.SCALE, null);
 
 
-        this.player.render(graphics);
+
+        for (Sprite sprite: this.sprites) {
+            sprite.render(graphics);
+        }
 
         bufferStrategy.show();
     }
