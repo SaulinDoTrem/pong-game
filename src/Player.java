@@ -58,22 +58,22 @@ public class Player extends Sprite{
 
     @Override
     public void tick() {
+        //Movimentação do Player
         if(this.isGoingRight())
             this.setX(this.getX()+this.getSpeed());
-
         if(this.isGoingLeft())
             this.setX(this.getX()-this.getSpeed());
 
-        if(this.getX()+super.getWidth() > Game.WIDTH*Game.SCALE)
+        //Teste de colisão com a parede
+        if(this.getX()+super.getWidth() >= Game.WIDTH*Game.SCALE)
             this.setX(Game.WIDTH*Game.SCALE - super.getWidth());
-
         if(this.getX() < 0)
             this.setX(0);
     }
 
     @Override
     public void render(Graphics graphics) {
-        graphics.setColor(super.getColor());
+        super.render(graphics);
         graphics.fillRect(this.getX(), this.getY(), super.getWidth(), super.getHeight());
     }
 

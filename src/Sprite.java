@@ -37,5 +37,7 @@ public abstract class Sprite {
 
 
     public abstract void tick();
-    public abstract void render(Graphics graphics);
+    public void render(Graphics graphics) {
+        graphics.setColor(this.getColor());
+    }
 }

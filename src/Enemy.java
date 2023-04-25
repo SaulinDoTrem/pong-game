@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.Random;
 
 public class Enemy extends Sprite{
 
@@ -29,12 +30,19 @@ public class Enemy extends Sprite{
 
     @Override
     public void tick() {
+        //Movimentação do adversário atrás da bola
+        this.setX(this.getX() + (Game.ball.getX() - this.getX() - new Random().nextDouble()));
 
+        //Teste de colisão com a parede
+        if(this.getX()+super.getWidth() >= Game.WIDTH*Game.SCALE)
+            this.setX(Game.WIDTH*Game.SCALE - super.getWidth());
+        if(this.getX() < 0)
+            this.setX(0);
     }
 
     @Override
     public void render(Graphics graphics) {
-        graphics.setColor(super.getColor());
+        super.render(graphics);
         graphics.fillRect((int)this.getX(), (int)this.getY(), super.getWidth(), super.getHeight());
     }
 

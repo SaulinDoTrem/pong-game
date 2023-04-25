@@ -10,19 +10,25 @@ public class Game extends Canvas implements Runnable, KeyListener {
     public static int WIDTH = 240;
     public static int HEIGHT = 120;
     public static int SCALE = 3;
-    private static int PLAYER_WIDTH = 120;
-    private static int PLAYER_HEIGHT = 10;
-    private static int PLAYER_SPEED = 5;
-    private static int PLAYER_X = ((WIDTH*SCALE)/2)-PLAYER_WIDTH/2;
-    private static int PLAYER_Y = HEIGHT*SCALE-PLAYER_HEIGHT;
-    private static Color ENEMY_COLOR = Color.red;
-    private static Color PLAYER_COLOR = Color.blue;
+    private static final int PLAYER_WIDTH = 120;
+    private static final int PLAYER_HEIGHT = 10;
+    private static final int PLAYER_SPEED = 5;
+    private static final int PLAYER_X = ((WIDTH*SCALE)/2)-PLAYER_WIDTH/2;
+    private static final int PLAYER_Y = HEIGHT*SCALE-PLAYER_HEIGHT;
+    private static final int BALL_DIMENSION = 6;
+    private static final int BALL_X = (WIDTH*SCALE/2)-(BALL_DIMENSION/2);
+    private static final int BALL_Y = (HEIGHT*SCALE/2)-(BALL_DIMENSION/2);
+    private static final double BALL_SPEED = 1.6;
+    private static final Color BALL_COLOR = Color.yellow;
+    private static final Color ENEMY_COLOR = Color.red;
+    private static final Color PLAYER_COLOR = Color.blue;
     public static boolean isRunning;
     private Thread thread;
-    private Player player = new Player(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_SPEED, PLAYER_COLOR);
-    private Enemy enemy = new Enemy(PLAYER_WIDTH, PLAYER_HEIGHT, ENEMY_COLOR, PLAYER_X, 0);
-    private Sprite[] sprites = {this.player, this.enemy};
-    private BufferedImage layer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+    public static Player player = new Player(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_SPEED, PLAYER_COLOR);
+    public static Ball ball = new Ball(BALL_DIMENSION, BALL_COLOR, BALL_X, BALL_Y, BALL_SPEED);
+    public static Enemy enemy = new Enemy(PLAYER_WIDTH, PLAYER_HEIGHT, ENEMY_COLOR, PLAYER_X, 0);
+    public Sprite[] sprites = {player, enemy, ball};
+    public BufferedImage layer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
     public Game() {
         this.setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
@@ -78,11 +84,11 @@ public class Game extends Canvas implements Runnable, KeyListener {
 
         Graphics graphics = this.layer.getGraphics();
         graphics.setColor(Color.black);
-        graphics.fillRect(0,0,this.WIDTH, this.HEIGHT);
+        graphics.fillRect(0,0,WIDTH, HEIGHT);
 
 
         graphics = bufferStrategy.getDrawGraphics();
-        graphics.drawImage(this.layer, 0, 0, this.WIDTH*this.SCALE, this.HEIGHT*this.SCALE, null);
+        graphics.drawImage(this.layer, 0, 0, WIDTH*SCALE, HEIGHT*SCALE, null);
 
 
 
@@ -128,24 +134,20 @@ public class Game extends Canvas implements Runnable, KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT -> {
-                this.player.setGoingLeft(true);
-            }
-            case KeyEvent.VK_RIGHT -> {
-                this.player.setGoingRight(true);
-            }
+            case KeyEvent.VK_LEFT ->
+                player.setGoingLeft(true);
+            case KeyEvent.VK_RIGHT ->
+                player.setGoingRight(true);
         }
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT -> {
-                this.player.setGoingLeft(true);
-            }
-            case KeyEvent.VK_RIGHT -> {
-                this.player.setGoingRight(true);
-            }
+            case KeyEvent.VK_LEFT ->
+                player.setGoingLeft(true);
+            case KeyEvent.VK_RIGHT ->
+                player.setGoingRight(true);
         }
 
     }
@@ -153,12 +155,10 @@ public class Game extends Canvas implements Runnable, KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT -> {
-                this.player.setGoingLeft(false);
-            }
-            case KeyEvent.VK_RIGHT -> {
-                this.player.setGoingRight(false);
-            }
+            case KeyEvent.VK_LEFT ->
+                player.setGoingLeft(false);
+            case KeyEvent.VK_RIGHT ->
+                player.setGoingRight(false);
         }
     }
 }
