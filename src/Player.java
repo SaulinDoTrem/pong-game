@@ -50,7 +50,7 @@ public class Player {
     }
 
     public void render(Graphics graphics) {
-        graphics.setColor(Color.blue );
+        graphics.setColor(Color.blue);
         graphics.fillRect(this.getX(),this.getY(),this.getWidth(),this.getHeight());
     }
 

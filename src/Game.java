@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 
 public class Game extends Canvas implements Runnable{
 
@@ -8,6 +10,8 @@ public class Game extends Canvas implements Runnable{
     public static int SCALE = 3;
     public static boolean isRunning;
     private Thread thread;
+    private Player player = new Player(((WIDTH*SCALE)/2)-16, HEIGHT*SCALE-16, 16, 16);
+    private BufferedImage layer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
     public Game() {
         this.setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
@@ -47,11 +51,29 @@ public class Game extends Canvas implements Runnable{
     }
 
     public void tick() {
-
+        this.player.tick();
     }
 
     public void render() {
+        BufferStrategy bufferStrategy = this.getBufferStrategy();
 
+        if(bufferStrategy == null){
+            this.createBufferStrategy(3);
+            return;
+        }
+
+        Graphics graphics = this.layer.getGraphics();
+        graphics.setColor(Color.black);
+        graphics.fillRect(0,0,this.WIDTH, this.HEIGHT);
+
+
+        graphics = bufferStrategy.getDrawGraphics();
+        graphics.drawImage(this.layer, 0, 0, this.WIDTH*this.SCALE, this.HEIGHT*this.SCALE, null);
+
+
+        this.player.render(graphics);
+
+        bufferStrategy.show();
     }
 
     @Override
