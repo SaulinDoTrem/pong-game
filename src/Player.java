@@ -5,12 +5,16 @@ public class Player {
     private int y;
     private int width;
     private int height;
+    private boolean isGoingRight;
+    private boolean isGoingLeft;
+    private int speed;
 
-    public Player(int x, int y, int width, int height) {
+    public Player(int x, int y, int width, int height, int speed) {
         this.setHeight(height);
         this.setWidth(width);
         this.setX(x);
         this.setY(y);
+        this.setSpeed(speed);
     }
 
     public void setHeight(int height) {
@@ -30,7 +34,7 @@ public class Player {
     }
 
     public void setX(int x) {
-        this.x = x;
+            this.x = x;
     }
 
     public int getX() {
@@ -45,8 +49,42 @@ public class Player {
         return this.y;
     }
 
-    public void tick() {
+    public int getSpeed() {
+        return this.speed;
+    }
 
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public void setGoingLeft(boolean goingLeft) {
+        this.isGoingLeft = goingLeft;
+    }
+
+    public boolean isGoingLeft() {
+        return this.isGoingLeft;
+    }
+
+    public void setGoingRight(boolean goingRight) {
+        this.isGoingRight = goingRight;
+    }
+
+    public boolean isGoingRight() {
+        return this.isGoingRight;
+    }
+
+    public void tick() {
+        if(this.isGoingRight())
+            this.setX(this.getX()+this.getSpeed());
+
+        if(this.isGoingLeft())
+            this.setX(this.getX()-this.getSpeed());
+
+        if(this.getX()+this.getWidth() > Game.WIDTH*Game.SCALE)
+            this.setX(Game.WIDTH*Game.SCALE - this.getWidth());
+
+        if(this.getX() < 0)
+            this.setX(0);
     }
 
     public void render(Graphics graphics) {
