@@ -54,8 +54,14 @@ public class Ball extends Sprite{
         this.setY(y);
         this.setSpeed(speed);
 
-        this.setDirectionX(new Random().nextGaussian());
-        this.setDirectionY(new Random().nextGaussian());
+        this.setBallAngle();
+    }
+
+    public void setBallAngle() {
+        int angle = new Random().nextInt(120 - 45) + 45;
+
+        this.setDirectionX(-Math.cos(Math.toRadians(angle)));
+        this.setDirectionY(Math.sin(Math.toRadians(angle)));
     }
 
     @Override
@@ -68,15 +74,21 @@ public class Ball extends Sprite{
 
         //Teste de colisão com a parede
         if(position+super.getWidth() >= Game.WIDTH*Game.SCALE || position < 0) {
-            increaseBallSpeedWhenIntersects(1);
+            increaseBallSpeedWhenIntersects(0.2);
             this.setDirectionX(this.getDirectionX()*-1);
         }
 
         //Pontuação conforme a bola passa
-        if(this.getY() >= Game.HEIGHT*Game.SCALE)
-            System.out.println("Ponto do inimigo");
-        if(this.getY() < 0)
-            System.out.println("Ponto do jogador");
+        if(this.getY()+this.getHeight() >= Game.HEIGHT*Game.SCALE) {
+            Game.ENEMY_POINTS++;
+            new Game();
+            return;
+        }
+        if(this.getY() < 0) {
+            Game.PLAYER_POINTS++;
+            new Game();
+            return;
+        }
 
         //Simula a bola
         Rectangle ball = new Rectangle(
@@ -103,9 +115,17 @@ public class Ball extends Sprite{
         );
 
         //Testa colisão com o jogador e o adversário
-        if(ball.intersects(player) || ball.intersects(enemy)) {
-            increaseBallSpeedWhenIntersects(0.4);
-            this.setDirectionY(this.getDirectionY()*-1);
+        if(ball.intersects(player)) {
+            this.increaseBallSpeedWhenIntersects(0.4);
+            this.setBallAngle();
+            if(this.getDirectionY() > 0)
+                this.setDirectionY(this.getDirectionY()*-1);
+        }
+        if(ball.intersects(enemy)) {
+            this.increaseBallSpeedWhenIntersects(0.4);
+            this.setBallAngle();
+            if(this.getDirectionY() < 0)
+                this.setDirectionY(this.getDirectionY()*-1);
         }
 
     }
@@ -117,6 +137,6 @@ public class Ball extends Sprite{
     @Override
     public void render(Graphics graphics) {
         super.render(graphics);
-        graphics.fillOval((int)this.getX(), (int)this.getY(), super.getWidth(), super.getHeight());
+        graphics.fillRect((int)this.getX(), (int)this.getY(), super.getWidth(), super.getHeight());
     }
 }

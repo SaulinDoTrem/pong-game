@@ -31,7 +31,7 @@ public class Enemy extends Sprite{
     @Override
     public void tick() {
         //Movimentação do adversário atrás da bola
-        this.setX(this.getX() + (Game.ball.getX() - this.getX() - new Random().nextDouble()));
+        this.setX(this.getX() + ((Game.ball.getX() - this.getX() - 10) * 0.15));
 
         //Teste de colisão com a parede
         if(this.getX()+super.getWidth() >= Game.WIDTH*Game.SCALE)

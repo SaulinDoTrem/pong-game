@@ -7,15 +7,17 @@ import java.awt.image.BufferedImage;
 
 public class Game extends Canvas implements Runnable, KeyListener {
 
-    public static int WIDTH = 240;
+    public static int WIDTH = 160;
     public static int HEIGHT = 120;
     public static int SCALE = 3;
-    private static final int PLAYER_WIDTH = 120;
-    private static final int PLAYER_HEIGHT = 10;
-    private static final int PLAYER_SPEED = 5;
+    public static int PLAYER_POINTS = 0;
+    public static int ENEMY_POINTS = 0;
+    private static final int PLAYER_WIDTH = 40*SCALE;
+    private static final int PLAYER_HEIGHT = 5*SCALE;
+    private static final int PLAYER_SPEED = 4;
     private static final int PLAYER_X = ((WIDTH*SCALE)/2)-PLAYER_WIDTH/2;
     private static final int PLAYER_Y = HEIGHT*SCALE-PLAYER_HEIGHT;
-    private static final int BALL_DIMENSION = 6;
+    private static final int BALL_DIMENSION = 6*SCALE;
     private static final int BALL_X = (WIDTH*SCALE/2)-(BALL_DIMENSION/2);
     private static final int BALL_Y = (HEIGHT*SCALE/2)-(BALL_DIMENSION/2);
     private static final double BALL_SPEED = 1.6;
@@ -24,37 +26,26 @@ public class Game extends Canvas implements Runnable, KeyListener {
     private static final Color PLAYER_COLOR = Color.blue;
     public static boolean isRunning;
     private Thread thread;
-    public static Player player = new Player(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_SPEED, PLAYER_COLOR);
-    public static Ball ball = new Ball(BALL_DIMENSION, BALL_COLOR, BALL_X, BALL_Y, BALL_SPEED);
-    public static Enemy enemy = new Enemy(PLAYER_WIDTH, PLAYER_HEIGHT, ENEMY_COLOR, PLAYER_X, 0);
-    public Sprite[] sprites = {player, enemy, ball};
+    public static Player player;
+    public static Ball ball;
+    public static Enemy enemy;
+    public static Sprite[] sprites;
     public BufferedImage layer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
     public Game() {
         this.setPreferredSize(new Dimension(WIDTH*SCALE, HEIGHT*SCALE));
         this.addKeyListener(this);
-        this.initFrame();
+        player = new Player(PLAYER_X, PLAYER_Y, PLAYER_WIDTH, PLAYER_HEIGHT, PLAYER_SPEED, PLAYER_COLOR);
+        enemy = new Enemy(PLAYER_WIDTH, PLAYER_HEIGHT, ENEMY_COLOR, PLAYER_X, 0);
+        ball = new Ball(BALL_DIMENSION, BALL_COLOR, BALL_X, BALL_Y, BALL_SPEED);
+        sprites = new Sprite[]{player, enemy, ball};
     }
 
     public static void main(String[] args) {
         Game game = new Game();
+        game.initFrame();
 
-        game.start();
-    }
-
-    public synchronized void start() {
-        this.thread = new Thread(this);
-        isRunning = true;
-        this.thread.start();
-    }
-
-    public synchronized void stop() {
-        isRunning = false;
-        try {
-            this.thread.join();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        new Thread(game).start();
     }
 
     public void initFrame() {
@@ -69,7 +60,7 @@ public class Game extends Canvas implements Runnable, KeyListener {
     }
 
     public void tick() {
-        for (Sprite sprite: this.sprites) {
+        for (Sprite sprite: sprites) {
             sprite.tick();
         }
     }
@@ -83,52 +74,55 @@ public class Game extends Canvas implements Runnable, KeyListener {
         }
 
         Graphics graphics = this.layer.getGraphics();
-        graphics.setColor(Color.black);
-        graphics.fillRect(0,0,WIDTH, HEIGHT);
+
+
 
 
         graphics = bufferStrategy.getDrawGraphics();
         graphics.drawImage(this.layer, 0, 0, WIDTH*SCALE, HEIGHT*SCALE, null);
 
 
-
-        for (Sprite sprite: this.sprites) {
+        for (Sprite sprite: sprites) {
             sprite.render(graphics);
         }
+
+        this.renderPoints(graphics);
 
         bufferStrategy.show();
     }
 
+    public void renderPoints(Graphics graphics) {
+        int pointsY = HEIGHT*SCALE/2;
+        int pointsX = 16;
+
+        graphics.setFont(new Font("Arial", Font.BOLD, 16));
+        graphics.setColor(Color.RED);
+        graphics.drawString(""+ ENEMY_POINTS, pointsX, pointsY);
+
+        pointsX+=10;
+
+        graphics.setFont(new Font("Arial", Font.BOLD, 16));
+        graphics.setColor(Color.white);
+        graphics.drawString(" X ", pointsX, pointsY);
+
+        pointsX+=20;
+
+        graphics.setFont(new Font("Arial", Font.BOLD, 18));
+        graphics.setColor(Color.blue);
+        graphics.drawString(""+PLAYER_POINTS, pointsX, pointsY);
+    }
+
     @Override
     public void run() {
-        long lastTime = System.nanoTime();
-        double amountOfTicks = 60;
-        double ns = Math.pow(10, 9) / amountOfTicks;
-        double delta = 0;
-        int frames = 0;
-        double timer = System.currentTimeMillis();
-
-        while(isRunning) {
-            long now = System.nanoTime();
-            delta += (now - lastTime) / ns;
-            lastTime = now;
-
-            if(delta >= 1) {
-                this.tick();
-                this.render();
-                frames++;
-                delta--;
+        while(true) {
+            this.tick();
+            this.render();
+            try {
+                Thread.sleep(1000/60);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-
-            if(System.currentTimeMillis() - timer >= 1000){
-                System.out.println("FPS: " + frames);
-                frames = 0;
-                timer += 1000;
-            }
-
         }
-
-        this.stop();
     }
 
     @Override

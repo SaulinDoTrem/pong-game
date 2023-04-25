@@ -14,8 +14,6 @@ public class Player extends Sprite{
         this.setSpeed(speed);
     }
 
-
-
     public void setX(int x) {
             this.x = x;
     }
