@@ -24,8 +24,6 @@ public class Game extends Canvas implements Runnable, KeyListener {
     private static final Color BALL_COLOR = Color.yellow;
     private static final Color ENEMY_COLOR = Color.red;
     private static final Color PLAYER_COLOR = Color.blue;
-    public static boolean isRunning;
-    private Thread thread;
     public static Player player;
     public static Ball ball;
     public static Enemy enemy;
@@ -74,10 +72,6 @@ public class Game extends Canvas implements Runnable, KeyListener {
         }
 
         Graphics graphics = this.layer.getGraphics();
-
-
-
-
         graphics = bufferStrategy.getDrawGraphics();
         graphics.drawImage(this.layer, 0, 0, WIDTH*SCALE, HEIGHT*SCALE, null);
 
